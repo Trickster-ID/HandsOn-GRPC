@@ -1,0 +1,45 @@
+syntax = "proto3";
+package go_grpc;
+
+option go_package = "pb/product";
+
+service ProductService {
+    rpc GetProducts(Empty) returns (Products);
+    rpc GetProduct(Id) returns (Product);
+    rpc CreateProduct(Product) returns(Id);
+    rpc UpdateProduct(Product) returns(Status);
+    rpc DeleteProduct(Id) returns(Status);
+}
+
+message Empty {};
+
+message Status {
+    uint32 status = 1;
+}
+
+message Id {
+    uint32 id = 1;
+}
+
+message Products {
+    repeated Product data = 1;
+}
+
+message Product {
+    uint32 id = 1;
+    string name = 2;
+    double price = 3;
+    uint32 stock = 4;
+}
+
+message Category {
+    uint32 id = 1;
+    string name = 2;
+}
+
+// message Pagination {
+//     uint64 total =1;
+//     uint32 per_page = 2;
+//     uint32 current_page = 3;
+//     uint32 last_page = 4;
+// }

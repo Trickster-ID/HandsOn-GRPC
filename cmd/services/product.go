@@ -116,9 +116,47 @@ func (p *ProductService) CreateProduct(ctx context.Context, r *productPB.Product
 }
 
 func (p *ProductService) UpdateProduct(ctx context.Context, r *productPB.Product) (*productPB.Status, error) {
-	return nil, nil
+	if r.Id == 0 {
+		return nil, errors.New("Id value is nil")
+	}
+	updatedRequestData := false
+	if len(r.Name) != 0 {
+		updatedRequestData = true
+	}
+	if r.Price != 0 {
+		updatedRequestData = true
+	}
+	if r.Stock != 0 {
+		updatedRequestData = true
+	}
+
+	if !updatedRequestData {
+		return nil, errors.New("no any data field will update")
+	}
+
+	for _, v := range productDBs {
+		if v.Id == r.Id {
+			if len(r.Name) != 0 {
+				v.Name = r.Name
+			}
+			if r.Price != 0 {
+				v.Price = r.Price
+			}
+			if r.Stock != 0 {
+				v.Stock = r.Stock
+			}
+			return &productPB.Status{Status: 1}, nil
+		}
+	}
+	return nil, errors.New("data not found by id")
 }
 
 func (p *ProductService) DeleteProduct(ctx context.Context, id *productPB.Id) (*productPB.Status, error) {
-	return nil, nil
+	for i, v := range productDBs {
+		if v.Id == id.Id {
+			productDBs = append(productDBs[:i], productDBs[i+1:]...)
+			return &productPB.Status{Status: 1}, nil
+		}
+	}
+	return nil, errors.New("data not found by id")
 }
